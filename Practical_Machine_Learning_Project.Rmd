@@ -9,6 +9,8 @@ Practical Machine Learning class from John Hopkins University.
 
 The full project report can by viewed at: https://github.com/slane/Practical-Machine-Learning/tree/master/Course%20Project
 
+The HTML output is stored and rendered correctly on a gh-pages site at: http://slane2014.github.io/Practical_Machine_Learning_Project.html
+
 # Project Background
 Using devices such as Jawbone Up, Nike FuelBand, and Fitbit it is now possible to collect a large amount of data about personal activity relatively inexpensively. These type of devices are part of the quantified self movement – a group of enthusiasts who take measurements about themselves regularly to improve their health, to find patterns in their behavior, or because they are tech geeks. One thing that people regularly do is quantify how much of a particular activity they do, but they rarely quantify how well they do it. In this project, your goal will be to use data from accelerometers on the belt, forearm, arm, and dumbell of 6 participants. They were asked to perform barbell lifts correctly and incorrectly in 5 different ways. More information is available from the website here: http://groupware.les.inf.puc-rio.br/har (see the section on the Weight Lifting Exercise Dataset).
 
@@ -35,7 +37,6 @@ The goals of this project are to predict the manner in which they did the exerci
 The following libraries and data were used to conduct the anaylsis, training, and 
 predictions for this project.
 
-
 ```{r introduction,echo=TRUE,message=TRUE,include=TRUE, warnings=FALSE}
 # install.packages("registerDoMC")
 library(doMC)
@@ -43,7 +44,11 @@ library(caret)
 registerDoMC(cores = 8)
 require(ggplot2)
 require(randomForest)
+```
 
+# Data Collection
+
+```{r}
 setwd("~/datasciencecoursera/Machine_Learning/Project2")
 if (!file.exists("pml_training.csv")) {
     fileURL <- "https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv"
@@ -73,7 +78,7 @@ Also, variables such as X, raw_timestamp_part_1, raw_timestamp_part_2, and cvtd_
 Removed those variables since they clearly don't add predictability.
 
 ```{r}
-drops <- c("X","user_name","raw_timestamp_part_1","raw_timestamp_part_2","cvtd_timestamp","new_window","kurtosis_roll_belt","kurtosis_picth_belt","kurtosis_yaw_belt","skewness_roll_belt","skewness_roll_belt.1","skewness_yaw_belt","max_roll_belt","max_picth_belt","max_yaw_belt","min_roll_belt","min_pitch_belt","min_yaw_belt","amplitude_roll_belt","amplitude_pitch_belt","amplitude_yaw_belt","var_total_accel_belt","avg_roll_belt","stddev_roll_belt","var_roll_belt","avg_pitch_belt","stddev_pitch_belt","var_pitch_belt","avg_yaw_belt","stddev_yaw_belt","var_yaw_belt","var_accel_arm","avg_roll_arm","stddev_roll_arm","var_roll_arm","avg_pitch_arm","stddev_pitch_arm","var_pitch_arm","avg_yaw_arm","stddev_yaw_arm","var_yaw_arm","kurtosis_roll_arm","kurtosis_picth_arm","kurtosis_yaw_arm","skewness_roll_arm","skewness_pitch_arm","skewness_yaw_arm ","max_roll_arm","max_picth_arm","max_yaw_arm","min_roll_arm","min_pitch_arm","min_yaw_arm","amplitude_roll_arm","amplitude_pitch_arm","amplitude_yaw_arm","kurtosis_roll_dumbbel","kurtosis_picth_dumbbell","kurtosis_yaw_dumbbell","skewness_roll_dumbbell","skewness_pitch_dumbbell","skewness_yaw_dumbbell","max_roll_dumbbell","max_picth_dumbbell","max_yaw_dumbbell","min_roll_dumbbell","min_pitch_dumbbell","min_yaw_dumbbell","amplitude_roll_dumbbell","amplitude_pitch_dumbbell","var_accel_dumbbell","avg_roll_dumbbell","stddev_roll_dumbbell","var_roll_dumbbell","avg_pitch_dumbbell","stddev_pitch_dumbbell","var_pitch_dumbbell","avg_yaw_dumbbell","stddev_yaw_dumbbell","var_yaw_dumbbell","kurtosis_roll_forearm","kurtosis_picth_forearm","kurtosis_yaw_forearm","skewness_roll_forearm","skewness_pitch_forearm","skewness_yaw_forearm","max_roll_forearm","max_picth_forearm","max_yaw_forearm","min_roll_forearm","min_pitch_forearm","min_yaw_forearm","amplitude_roll_forearm","amplitude_pitch_forearm","amplitude_yaw_forearm","var_accel_forearm","avg_roll_forearm","stddev_roll_forearm","var_roll_forearm","avg_pitch_forearm","stddev_pitch_forearm","var_pitch_forearm","avg_yaw_forearm","stddev_yaw_forearm","var_yaw_forearm","skewness_yaw_arm","kurtosis_roll_dumbbell","amplitude_yaw_dumbbell")
+drops <- c("X","user_name","raw_timestamp_part_1","raw_timestamp_part_2","cvtd_timestamp","kurtosis_roll_belt","kurtosis_picth_belt","kurtosis_yaw_belt","skewness_roll_belt","skewness_roll_belt.1","skewness_yaw_belt","max_roll_belt","max_picth_belt","max_yaw_belt","min_roll_belt","min_pitch_belt","min_yaw_belt","amplitude_roll_belt","amplitude_pitch_belt","amplitude_yaw_belt","var_total_accel_belt","avg_roll_belt","stddev_roll_belt","var_roll_belt","avg_pitch_belt","stddev_pitch_belt","var_pitch_belt","avg_yaw_belt","stddev_yaw_belt","var_yaw_belt","var_accel_arm","avg_roll_arm","stddev_roll_arm","var_roll_arm","avg_pitch_arm","stddev_pitch_arm","var_pitch_arm","avg_yaw_arm","stddev_yaw_arm","var_yaw_arm","kurtosis_roll_arm","kurtosis_picth_arm","kurtosis_yaw_arm","skewness_roll_arm","skewness_pitch_arm","skewness_yaw_arm ","max_roll_arm","max_picth_arm","max_yaw_arm","min_roll_arm","min_pitch_arm","min_yaw_arm","amplitude_roll_arm","amplitude_pitch_arm","amplitude_yaw_arm","kurtosis_roll_dumbbel","kurtosis_picth_dumbbell","kurtosis_yaw_dumbbell","skewness_roll_dumbbell","skewness_pitch_dumbbell","skewness_yaw_dumbbell","max_roll_dumbbell","max_picth_dumbbell","max_yaw_dumbbell","min_roll_dumbbell","min_pitch_dumbbell","min_yaw_dumbbell","amplitude_roll_dumbbell","amplitude_pitch_dumbbell","var_accel_dumbbell","avg_roll_dumbbell","stddev_roll_dumbbell","var_roll_dumbbell","avg_pitch_dumbbell","stddev_pitch_dumbbell","var_pitch_dumbbell","avg_yaw_dumbbell","stddev_yaw_dumbbell","var_yaw_dumbbell","kurtosis_roll_forearm","kurtosis_picth_forearm","kurtosis_yaw_forearm","skewness_roll_forearm","skewness_pitch_forearm","skewness_yaw_forearm","max_roll_forearm","max_picth_forearm","max_yaw_forearm","min_roll_forearm","min_pitch_forearm","min_yaw_forearm","amplitude_roll_forearm","amplitude_pitch_forearm","amplitude_yaw_forearm","var_accel_forearm","avg_roll_forearm","stddev_roll_forearm","var_roll_forearm","avg_pitch_forearm","stddev_pitch_forearm","var_pitch_forearm","avg_yaw_forearm","stddev_yaw_forearm","var_yaw_forearm","skewness_yaw_arm","kurtosis_roll_dumbbell","amplitude_yaw_dumbbell")
 select_pml_training <- pml_training[,!(names(pml_training) %in% drops)]
 #summary(select_pml_training)
 ```
@@ -98,6 +103,15 @@ We use the "randomForest" function above as it is optimized for best performance
 and set "importance = TRUE" to We can learn several things from this output. The graph above shows the relative 
 importance of each variable in our data set. 
 
+# Data Correlation
+
+```{r}
+featurePlot(x = my_training[, 2:6],y = my_training$classe, plot = "ellipse", auto.key = list(columns = 5))
+```
+
+The scatter plot matrix above shows the strong correlation between several of the 
+variables marked as highly important versus the classe outcome.
+
 # Prediction Calculation
 
 ```{r}
@@ -111,7 +125,7 @@ As shown in the output from above, we have a very high accuracy in our model of
 # Assignment Submission 
 
 ```{r}
-predictions_assignment <- predict(rfFit, pml_testing, type = "class")
+predictions_assignment <- predict(rfFit, my_testing, type = "class")
 
 pml_write_files = function(x){
   n = length(x)
