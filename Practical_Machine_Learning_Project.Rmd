@@ -100,8 +100,7 @@ varImpPlot(rfFit)
 ```
 
 We use the "randomForest" function above as it is optimized for best performance,
-and set "importance = TRUE" to We can learn several things from this output. The graph above shows the relative 
-importance of each variable in our data set. 
+and set "importance = TRUE". We can learn several things from this output. The graph above shows the relative importance of each variable in our data set. 
 
 # Data Correlation
 
@@ -119,8 +118,7 @@ prediction <- predict(rfFit, my_testing, type = "class")
 confusionMatrix(prediction, my_testing$classe)
 ```
 
-As shown in the output from above, we have a very high accuracy in our model of
-0.9938. 
+As shown in the output from above, we have a very high accuracy in our model.
 
 # Assignment Submission 
 
